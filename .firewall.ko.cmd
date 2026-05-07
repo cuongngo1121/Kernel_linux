@@ -1,0 +1,1 @@
+savedcmd_firewall.ko := ld -r -EL  -maarch64elf -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T /usr/src/linux-headers-6.17.0-23-generic/scripts/module.lds -o firewall.ko firewall.o firewall.mod.o .module-common.o
