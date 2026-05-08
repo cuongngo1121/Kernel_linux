@@ -4,7 +4,7 @@ FastAPI server for managing the Stateful Firewall with DPI
 """
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
-from fastapi.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, validator
 import subprocess
 import json
