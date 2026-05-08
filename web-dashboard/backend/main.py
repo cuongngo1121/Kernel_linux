@@ -467,6 +467,65 @@ async def check_module_status():
         logger.error(f"Error checking module status: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@app.post("/api/module/load", tags=["Module"], response_model=CommandResponse)
+async def load_module():
+    """Load the firewall kernel module (insmod)"""
+    try:
+        ko_path = controller.base_path / "firewall.ko"
+        if not ko_path.exists():
+            return CommandResponse(success=False, message=f"firewall.ko not found at {ko_path}")
+
+        result = subprocess.run(
+            ["sudo", "insmod", str(ko_path)],
+            capture_output=True, text=True, timeout=10
+        )
+        if result.returncode == 0:
+            logger.info("Firewall module loaded")
+            return CommandResponse(success=True, message="Firewall module loaded successfully")
+        else:
+            err = (result.stderr or result.stdout).strip()
+            # Already loaded is OK
+            if "File exists" in err:
+                return CommandResponse(success=True, message="Module already loaded")
+            return CommandResponse(success=False, message=f"insmod failed: {err}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/module/unload", tags=["Module"], response_model=CommandResponse)
+async def unload_module():
+    """Unload the firewall kernel module (rmmod)"""
+    try:
+        result = subprocess.run(
+            ["sudo", "rmmod", "firewall"],
+            capture_output=True, text=True, timeout=10
+        )
+        if result.returncode == 0:
+            logger.info("Firewall module unloaded")
+            return CommandResponse(success=True, message="Firewall module unloaded")
+        else:
+            err = (result.stderr or result.stdout).strip()
+            if "not currently loaded" in err or "No such file" in err:
+                return CommandResponse(success=True, message="Module was not loaded")
+            return CommandResponse(success=False, message=f"rmmod failed: {err}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/mirror/toggle", tags=["Module"], response_model=CommandResponse)
+async def toggle_mirror(enable: bool = True):
+    """Enable or disable packet mirroring via firewall_control"""
+    try:
+        cmd = "enable_mirror" if enable else "disable_mirror"
+        success, output = controller._run_command(cmd, sudo=True)
+        action = "enabled" if enable else "disabled"
+        if success:
+            return CommandResponse(success=True, message=f"Packet mirroring {action}")
+        return CommandResponse(success=False, message=output.strip())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============================================================================
 # MAIN
 # ============================================================================
