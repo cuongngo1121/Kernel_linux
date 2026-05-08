@@ -26,8 +26,34 @@ hello-net/
 ├── Makefile               # Cấu hình xây dựng
 ├── QUICKSTART.md          # Hướng dẫn bắt đầu nhanh
 ├── IMPLEMENTATION_SUMMARY.md # Báo cáo hoàn thành
-└── PROJECT_OVERVIEW.txt    # Tổng quan dự án
+├── PROJECT_OVERVIEW.txt    # Tổng quan dự án
+└── web-dashboard/          # Giao diện quản lý Web (React + FastAPI)
+    ├── install.sh          # Lệnh cài đặt tự động 1 chạm
+    ├── backend/            # API server (Python)
+    └── frontend/           # Dashboard UI (Cyberpunk style)
 ```
+
+---
+
+## 🖥️ Giao diện Web Dashboard (Cyberpunk Style)
+
+Dự án đi kèm với một Dashboard hiện đại giúp quản lý tường lửa mà không cần dùng dòng lệnh.
+
+### Tính năng Dashboard:
+- 📊 **Theo dõi thời gian thực**: Trạng thái kết nối, biểu đồ gói tin.
+- 🛡️ **Quản lý Mô-đun**: Tải (Load) hoặc Gỡ (Unload) mô-đun nhân ngay từ giao diện.
+- 🚫 **Chặn IP nhanh**: Form thêm IP vào danh sách đen với 1 click.
+- 📝 **Nhật ký Nhân**: Xem `dmesg` trực tiếp trên web với định dạng màu sắc dễ nhìn.
+- 🎭 **Giao diện Cyberpunk**: Thiết kế Glassmorphism, hiệu ứng Glow và hiệu ứng động cực đẹp.
+
+### Cài đặt nhanh Dashboard:
+```bash
+cd web-dashboard
+sudo ./install.sh
+```
+*Lệnh này sẽ tự động cài đặt mọi dependencies, build giao diện và thiết lập systemd services.*
+
+Sau khi cài đặt, truy cập tại: `http://localhost:5173`
 
 ---
 
